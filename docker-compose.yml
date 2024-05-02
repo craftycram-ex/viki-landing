@@ -1,0 +1,29 @@
+version: "3.6"
+
+services:
+  web:
+    image: "ghcr.io/<user>/<repo>:latest"
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.<your_traefik_service_name>.entrypoints=https"
+        - "traefik.http.routers.<your_traefik_service_name>.rule=Host(`yourdomain.com`)"
+        - "traefik.http.routers.<your_traefik_service_name>.tls=true"
+        - "traefik.http.routers.<your_traefik_service_name>.tls.certresolver=cf"
+        - "traefik.http.services.<your_traefik_service_name>.loadbalancer.server.port=80"
+        - "traefik.http.services.<your_traefik_service_name>.loadbalancer.server.scheme=http"
+        - "traefik.http.middlewares.ratelimit.ratelimit.average=100"
+        - "traefik.http.middlewares.ratelimit.ratelimit.burst=50"
+        - "traefik.http.routers.<your_traefik_service_name>.middlewares=ratelimit"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
