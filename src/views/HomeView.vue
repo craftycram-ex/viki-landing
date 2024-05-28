@@ -19,6 +19,6 @@ onMounted(() => {
 <template>
   <main>
     <h1>welcome {{ ip }}</h1>
-    <p>your current public ip</p>
+    <p>your current ip</p>
   </main>
 </template>
